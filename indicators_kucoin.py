@@ -15,7 +15,7 @@ import plotly.express as px
 # Get all USDT pairs
 BASE_URL = 'https://api.kucoin.com'
 
-dic_nm_adx = {
+NM_ADX_GROUP = {
     '0-25': '1. Absent or Weak Trend',
     '25-50': '2. Strong Trend',
     '50-75': '3. Very Strong Trend',
@@ -40,7 +40,7 @@ def check_adx(value):
     Returns:
         str or None: The category name for the provided ADX value.
     """    
-    for key, name in dic_nm_adx.items():
+    for key, name in NM_ADX_GROUP.items():
         range_start, range_end = map(int, key.split('-'))
         if range_start <= value <= range_end:
             return name
