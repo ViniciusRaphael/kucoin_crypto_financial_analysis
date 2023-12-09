@@ -22,6 +22,8 @@ NM_ADX_GROUP = {
     '75-100': '4. Extremely Strong Trend'
 }
 
+DT_TODAY = datetime.today().date()
+
 def kucoin_crypto_symbols(url):
     resp = requests.get(f'{url}/api/v2/symbols')
     ticker_list = json.loads(resp.content)
@@ -173,7 +175,7 @@ def process_crypto_data(base_url, num_symbols = 0):
 
 df_concat = process_crypto_data(BASE_URL)
 
-def filter_indicators_today(dataframe):
+def filter_indicators_today(dataframe, vl_adx_min = 25, date = DT_TODAY ,vl_macd_hist_min = 0, vl_macd_delta_min = 0.01, qt_days_supertrend_positive = 1):
     """
     Filters the concatenated DataFrame to select specific indicators for the current date.
 
@@ -183,20 +185,19 @@ def filter_indicators_today(dataframe):
     Returns:
         pandas.DataFrame: Filtered DataFrame based on specific indicators for the current date.
     """
-    today = datetime.today().date()
 
     df_indicators = dataframe.loc[
-        (dataframe['vl_adx'] >= 25) &
-        (dataframe['dt_date'].dt.date == today) &
+        (dataframe['vl_adx'] >= vl_adx_min) &
+        (dataframe['dt_date'].dt.date == date) &
 
         # Ichimoku with price above conversion line and base line
         (dataframe['vl_price_close'] > dataframe['vl_conversion_line']) &
         (dataframe['vl_price_close'] > dataframe['vl_base_line']) &
 
         # vl_macd histogram greater than 0 and signal greater than vl_macd
-        (dataframe['vl_macd_hist'] >= 0) &
-        (dataframe['vl_macd_delta'] >= 0.01) &
-        (dataframe['qt_days_supertrend_positive'] >= 1)
+        (dataframe['vl_macd_hist'] >= vl_macd_hist_min) &
+        (dataframe['vl_macd_delta'] >= vl_macd_delta_min) &
+        (dataframe['qt_days_supertrend_positive'] >= qt_days_supertrend_positive)
     ]
 
     return df_indicators
@@ -233,7 +234,7 @@ def extract_crypto_trend(df_indicators):
 
     return df_crypto_trend
 
-extract_crypto_trend(df_filtered)
+crypto_trend = extract_crypto_trend(df_filtered)
 
 # # ## Follow up of orders
 
