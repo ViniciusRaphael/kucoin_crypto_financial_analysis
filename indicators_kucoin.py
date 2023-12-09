@@ -10,8 +10,6 @@ import requests,json
 import plotly.graph_objs as go
 import plotly.express as px
 
-
-
 # Get all USDT pairs
 BASE_URL = 'https://api.kucoin.com'
 
@@ -30,8 +28,6 @@ def kucoin_crypto_symbols(url):
     symbols_list = [ticker['symbol'] for ticker in ticker_list['data'] if str(ticker['symbol'][-4:]) == 'USDT']
 
     return symbols_list
-
-
 def check_adx(value):
     """
     Checks the ADX value against predefined ranges and returns the corresponding trend category.
@@ -47,8 +43,6 @@ def check_adx(value):
         if range_start <= value <= range_end:
             return name
     return None
-
-# Function to count positive values and reset count on encountering negative value
 def count_positive_reset(df_column):
     """
     Counts consecutive positive values in a DataFrame column and resets count on encountering negative values.
@@ -70,8 +64,7 @@ def count_positive_reset(df_column):
         counts.append(count)
 
     return counts
-
-def getting_data(url, symbol):
+def annual_usdt_crypto_data(url, symbol):
     """
         Retrieves and processes market data for a given symbol from the KuCoin API.
 
@@ -133,8 +126,6 @@ def getting_data(url, symbol):
         print('Error on connection')
 
         return None  # Return None if there is an error in the API call
-
-
 def process_crypto_data(base_url, num_symbols = 0):
     """
     Fetches and processes data for a specified number of crypto symbols from the KuCoin API.
@@ -157,7 +148,7 @@ def process_crypto_data(base_url, num_symbols = 0):
 
     for index, crypto_symbol in enumerate(symbols[:num_symbols], start=1):
         try:
-            data = getting_data(base_url, crypto_symbol)
+            data = annual_usdt_crypto_data(base_url, crypto_symbol)
             if not data.empty:  # Check if the dataframe is not empty before appending
                 testing.append(data)
                 print(f"Item {index}/{total_items}: {crypto_symbol}")
@@ -172,9 +163,6 @@ def process_crypto_data(base_url, num_symbols = 0):
         df = pd.DataFrame()
 
     return df
-
-df_concat = process_crypto_data(BASE_URL)
-
 def filter_indicators_today(dataframe, vl_adx_min = 25, date = DT_TODAY ,vl_macd_hist_min = 0, vl_macd_delta_min = 0.01, qt_days_supertrend_positive = 1):
     """
     Filters the concatenated DataFrame to select specific indicators for the current date.
@@ -201,11 +189,6 @@ def filter_indicators_today(dataframe, vl_adx_min = 25, date = DT_TODAY ,vl_macd
     ]
 
     return df_indicators
-
-df_filtered = filter_indicators_today(df_concat)
-
-# ## Possibilities of Profit
-
 def extract_crypto_trend(df_indicators):
     """
     Extracts specific columns from the filtered DataFrame and sorts the data based on indicators.
@@ -234,7 +217,11 @@ def extract_crypto_trend(df_indicators):
 
     return df_crypto_trend
 
+
+df_concat = process_crypto_data(BASE_URL)
+df_filtered = filter_indicators_today(df_concat)
 crypto_trend = extract_crypto_trend(df_filtered)
+
 
 # # ## Follow up of orders
 

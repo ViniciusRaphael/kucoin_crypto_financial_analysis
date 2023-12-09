@@ -46,5 +46,4 @@ else:
     # Handle the case when no data is available
     df_concat = pd.DataFrame()
 
-df_concat    
-
+df_concat
