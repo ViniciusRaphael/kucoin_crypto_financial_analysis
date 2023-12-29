@@ -11,3 +11,10 @@ The project consists of the following key components:
   - ADX: Calculating the Average Directional Index to measure the strength of a trend in the price movement of cryptocurrencies.
   - Ichimoku Cloud: Generating Ichimoku Cloud lines for analyzing support, resistance, and trend direction.
   - MACD: Computing the Moving Average Convergence Divergence for identifying potential buy or sell signals.
+
+
+## Todo
+- [ ] Get historical data (from yahoo finance)
+- [ ] Automate process of adding updated data to dataframe
+- [ ] Data cleansing
+- [ ] Creation of LSTM (Long Short-Term Memory) model
