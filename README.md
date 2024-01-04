@@ -14,7 +14,7 @@ The project consists of the following key components:
 
 
 ## Todo
-- [ ] Get historical data (from yahoo finance)
-- [ ] Automate process of adding updated data to dataframe
+- [x] Get historical data (from yahoo finance)
+- [x] Automate process of adding updated data to dataframe
 - [ ] Data cleansing
 - [ ] Creation of LSTM (Long Short-Term Memory) model
