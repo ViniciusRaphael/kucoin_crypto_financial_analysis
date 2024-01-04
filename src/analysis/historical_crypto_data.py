@@ -13,6 +13,7 @@ try:
     # Try to open the historical data file, if it exists
     with open("data/historical_crypto_data.csv") as file:
         df = pd.read_csv(file)
+        df.set_index('Date', inplace=True)
 
 except FileNotFoundError:
     # If the file doesn't exist, create dataframes for historical cryptocurrency data
@@ -58,7 +59,7 @@ else:
             # If the symbol is not present, get historical data from a default start date
             crypto_data = yf.Ticker(crypto).history(start="2020-01-01")
             crypto_data['symbol'] = crypto
-
+            crypto_data
             # Add data to the dataframe if it's not empty
             if not crypto_data.empty:
                 dataframes.append(crypto_data)
@@ -66,7 +67,8 @@ else:
 
     # Concatenate the dataframes and existing data, remove duplicates, and save to CSV
     final = pd.concat([df] + dataframes)
+    final
     final.drop_duplicates(inplace=True)
-    final.to_csv("data/historical_crypto_data.csv", index=False)
+    final.to_csv("data/historical_crypto_data.csv")
 
 print("Finished")
