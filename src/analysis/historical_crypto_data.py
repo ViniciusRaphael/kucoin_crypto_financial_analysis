@@ -47,7 +47,7 @@ else:
         # Check if the symbol is already present in the existing data
         if crypto in df['symbol'].values:
             # Get historical data from the last recorded date in the existing data
-            max_date = pd.to_datetime(df[df['symbol'] == crypto]['Date'], errors='coerce').max()
+            max_date = pd.to_datetime(df[df['symbol'] == crypto].index, errors='coerce').max()
             crypto_data = yf.Ticker(crypto).history(start=max_date)
             crypto_data['symbol'] = crypto
 
