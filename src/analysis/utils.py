@@ -78,48 +78,51 @@ class KucoinCryptoData:
         if kucoin.status_code == 200:  # Check if the request is successful
             data = json.loads(kucoin.text)  # Convert response to JSON
             # Create a DataFrame from the JSON response
-            df = pd.DataFrame(data['data'], columns=['unix', 'price_open', 'price_close', 'price_high', 'price_low', 'volume', 'turnover'])
-            df['nm_symbol'] = f'{symbol.replace("-", "")}'  # Add a formatted symbol column
-            df['dt_date'] = pd.to_datetime(df['unix'].astype(int), unit='s')  # Convert UNIX time to datetime
-            df.sort_values(by='dt_date', inplace=True)  # Sort DataFrame by date
+            if data is not None:
+                df = pd.DataFrame(data['data'], columns=['unix', 'price_open', 'price_close', 'price_high', 'price_low', 'volume', 'turnover'])
+                df['nm_symbol'] = f'{symbol.replace("-", "")}'  # Add a formatted symbol column
+                df['dt_date'] = pd.to_datetime(df['unix'].astype(int), unit='s')  # Convert UNIX time to datetime
+                df.sort_values(by='dt_date', inplace=True)  # Sort DataFrame by date
 
-            # Convert certain columns to float
-            df[['price_open', 'price_close', 'price_high', 'price_low']] = df[['price_open', 'price_close', 'price_high', 'price_low']].astype(float)
+                # Convert certain columns to float
+                df[['price_open', 'price_close', 'price_high', 'price_low']] = df[['price_open', 'price_close', 'price_high', 'price_low']].astype(float)
 
-            # Calculate ADX, DI+ and DI-
-            df[['vl_adx', 'vl_dmp', 'vl_dmn']] = ta.adx(df['price_high'], df['price_low'], df['price_close'], length=14)
-            df['nm_adx_trend'] = df['vl_adx'].apply(classify_adx_value)
+                # Calculate ADX, DI+ and DI-
+                df[['vl_adx', 'vl_dmp', 'vl_dmn']] = ta.adx(df['price_high'], df['price_low'], df['price_close'], length=14)
+                df['nm_adx_trend'] = df['vl_adx'].apply(classify_adx_value)
 
-            # Calculate Ichimoku Cloud
-            ichimoku_values = ta.ichimoku(df['price_high'], df['price_low'], df['price_close'])[0]
-            df[['vl_leading_span_a', 'vl_leading_span_b', 'vl_conversion_line', 'vl_base_line', 'vl_lagging_span']] = ichimoku_values
-            df['vl_price_over_conv_line'] = df['price_close'] - df['vl_conversion_line']
-            df['qt_days_ichimoku_positive'] = count_positive_reset(df['vl_price_over_conv_line'])
+                # Calculate Ichimoku Cloud
+                ichimoku_values = ta.ichimoku(df['price_high'], df['price_low'], df['price_close'])[0]
+                df[['vl_leading_span_a', 'vl_leading_span_b', 'vl_conversion_line', 'vl_base_line', 'vl_lagging_span']] = ichimoku_values
+                df['vl_price_over_conv_line'] = df['price_close'] - df['vl_conversion_line']
+                df['qt_days_ichimoku_positive'] = count_positive_reset(df['vl_price_over_conv_line'])
 
-            # Calculate MACD
-            macd_values = ta.macd(df['price_close'])
-            df[['vl_macd', 'vl_macd_hist', 'vl_macd_signal']] = macd_values.apply(lambda x: x.astype(float))
-            df['vl_macd_delta'] = df['vl_macd'] - df['vl_macd_signal']
-            df['qt_days_macd_delta_positive'] = count_positive_reset(df['vl_macd_delta'])
+                # Calculate MACD
+                macd_values = ta.macd(df['price_close'])
+                df[['vl_macd', 'vl_macd_hist', 'vl_macd_signal']] = macd_values.apply(lambda x: x.astype(float))
+                df['vl_macd_delta'] = df['vl_macd'] - df['vl_macd_signal']
+                df['qt_days_macd_delta_positive'] = count_positive_reset(df['vl_macd_delta'])
 
-            # Calculate Supertrend
-            supertrend_values = ta.supertrend(df['price_high'], df['price_low'], df['price_close'])
-            df[['vl_supertrend_trend', 'vl_supertrend_direction', 'vl_supertrend_long', 'vl_supertrend_short']] = supertrend_values
-            df['qt_days_supertrend_positive'] = count_positive_reset(df['vl_supertrend_direction'])
+                # Calculate Supertrend
+                supertrend_values = ta.supertrend(df['price_high'], df['price_low'], df['price_close'])
+                df[['vl_supertrend_trend', 'vl_supertrend_direction', 'vl_supertrend_long', 'vl_supertrend_short']] = supertrend_values
+                df['qt_days_supertrend_positive'] = count_positive_reset(df['vl_supertrend_direction'])
 
-            # Calculate average days indicators are positive
-            df['vl_avg_days_indicatores'] = round((df['qt_days_ichimoku_positive'] + df['qt_days_macd_delta_positive'] + df['qt_days_supertrend_positive']) / 3, 2)
+                # Calculate average days indicators are positive
+                df['vl_avg_days_indicatores'] = round((df['qt_days_ichimoku_positive'] + df['qt_days_macd_delta_positive'] + df['qt_days_supertrend_positive']) / 3, 2)
 
-            # Rename columns for clarity
-            df.rename(columns={
-                'price_open': 'vl_price_open',
-                'price_close': 'vl_price_close',
-                'price_high': 'vl_price_high',
-                'price_low': 'vl_price_low',
-                'volume': 'vl_volume'
-            }, inplace=True)
+                # Rename columns for clarity
+                df.rename(columns={
+                    'price_open': 'vl_price_open',
+                    'price_close': 'vl_price_close',
+                    'price_high': 'vl_price_high',
+                    'price_low': 'vl_price_low',
+                    'volume': 'vl_volume'
+                }, inplace=True)
 
-            return df  # Return the processed DataFrame
+                return df  # Return the processed DataFrame
+            else:
+                pass
         else:
             print('Error on connection')
 
@@ -150,7 +153,7 @@ class ProcessData:
                 data = KucoinCryptoData.get_annual_ohlcv(symbol = crypto_symbol)
                 if not data.empty:  # Check if the dataframe is not empty before appending
                     testing.append(data)
-                    print(f"Item {index}/{total_items}: {crypto_symbol}")
+                    print(f"Item {index}/{num_symbols}: {crypto_symbol}")
             except Exception as e:
                 print(f"Error processing {crypto_symbol}: {str(e)}")
                 pass
@@ -209,7 +212,6 @@ class ProcessData:
                 'vl_adx',
                 'nm_adx_trend',
                 'qt_days_ichimoku_positive',
-                'vl_macd_delta',
                 'qt_days_macd_delta_positive',
                 'qt_days_supertrend_positive',
                 'vl_avg_days_indicatores'

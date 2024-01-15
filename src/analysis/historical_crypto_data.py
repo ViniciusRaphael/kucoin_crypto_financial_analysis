@@ -1,7 +1,9 @@
+import time
+import numpy as np
+import pandas as pd
 import yfinance as yf
 from utils import KucoinCryptoData as kc
-import pandas as pd
-import time
+
 
 # Get a list of cryptocurrency symbols from Kucoin
 kucoin_list = kc.get_kucoin_symbols()
@@ -19,7 +21,7 @@ except FileNotFoundError:
     # If the file doesn't exist, create dataframes for historical cryptocurrency data
     dataframes = []
 
-    # Loop through the first 25 symbols in the list
+    # Loop through the list
     for crypto in crypto_list:
         print(crypto)
 
@@ -40,7 +42,7 @@ else:
     # If the file exists, read CSV into a DataFrame
     dataframes = []
 
-    # Loop through the first 25 symbols in the list
+    # Loop through the list
     for crypto in crypto_list:
         print(crypto)
 
@@ -69,6 +71,7 @@ else:
     final = pd.concat([df] + dataframes)
     final
     final.drop_duplicates(inplace=True)
+    final.replace('', np.nan, regex=True, inplace=True)
     final.to_csv("data/historical_crypto_data.csv")
 
 print("Finished")
