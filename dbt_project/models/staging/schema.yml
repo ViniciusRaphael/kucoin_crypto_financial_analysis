@@ -1,0 +1,10 @@
+
+version: 2
+
+sources:
+  - name: localhost
+    description: "A starter dbt model"
+    database: 'crypto_table'
+    schema: public
+    tables:
+      - name: crypto_historical_price
