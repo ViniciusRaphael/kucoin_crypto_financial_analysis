@@ -113,14 +113,14 @@ ipywidgets==8.1.1
 isodate==0.6.1
 itsdangerous==2.1.2
 jedi==0.19.1
-Jinja2==3.1.2
+Jinja2==3.1.3
 jmespath==1.0.1
 json5==0.9.14
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.2
 jupyter==1.0.0
 jupyter-console==6.6.3
-jupyter-server==1.24.0
+jupyter-server==2.11.2
 jupyter_client==7.4.9
 jupyter_core==5.5.0
 jupyterlab==3.5.3
@@ -204,7 +204,7 @@ psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pycparser==2.21
-pycryptodome==3.19.0
+pycryptodome==3.19.1
 pydantic==2.5.2
 pydantic_core==2.14.5
 Pygments==2.17.2
@@ -283,7 +283,7 @@ wcwidth==0.2.12
 webencodings==0.5.1
 websocket-client==1.7.0
 websockets==12.0
-Werkzeug==2.2.3
+Werkzeug==2.3.8
 widgetsnbextension==4.0.9
 wrapt==1.16.0
 WTForms==3.1.1
