@@ -1,0 +1,11 @@
+version: 2
+
+models:
+    - name: stg_crypto_hist_price
+      description: 'Crypto historical price downloaded from yfinance'
+      columns:
+        - name: nm_date
+          description: 'Currency date'
+          tests:
+            - not_null
+
